@@ -36,7 +36,6 @@ class Qulink:
 
 @dataclass
 class QulinksRecord:
-    qulinks_record: List[Qulink]
 
     @classmethod
     def fetch_qulinks(cls):
@@ -44,4 +43,4 @@ class QulinksRecord:
         query = datastore_client.query(kind='qulink')
         queried_qulinks = query.fetch()
         qulinks = [Qulink(name=qulink['name'], url=qulink['url']) for qulink in queried_qulinks]
-        return cls(qulinks)
+        return qulinks

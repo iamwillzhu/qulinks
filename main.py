@@ -1,45 +1,17 @@
-import os
-
 from flask import Flask, render_template, redirect
-from google.cloud import datastore
+from qulinks.models.qulinks_record import QulinksRecord, Qulink
 
 app = Flask(__name__) 
-datastore_client = datastore.Client()
-
-def store_qulink(name, url):
-    entity = datastore.Entity(key=datastore_client.key('qulink'))
-    entity.update({
-        'name': name,
-        'url': url,
-    })
-
-    datastore_client.put(entity)
-
-
-def get_all_qulinks():
-    query = datastore_client.query(kind='qulink')
-    query.order = ['-name']
-
-    return query.fetch()
-
-def get_qulink_by_name(name):
-    query = datastore_client.query(kind='qulink')
-    query.add_filter('name', '=', name)
-    return query.fetch(limit=1)
-
 
 @app.route('/')
 def root():
-    qulinks =  get_all_qulinks()
-
+    qulinks =  QulinksRecord.fetch_qulinks()
     return render_template('index.html', qulinks=qulinks)
 
-@app.route('/<name>')
-def redirect_qulink(name):
-    qulinks = get_qulink_by_name(name)
-    qulink = [qulink for qulink in qulinks][0]
-
-    return redirect(qulink['url'])
+@app.route('/prod/v1/qu/<name>')
+def redirect_to_qulink(name):
+    qulink = Qulink.get_qulink_by_name(name)
+    return redirect(qulink.url)
 
 if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App

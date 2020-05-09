@@ -19,5 +19,5 @@ class TestQulinksRecord:
         qulink.delete_qulink()
         qulinks_record_after_delete = QulinksRecord.fetch_qulinks()
 
-        assert(qulink in qulinks_record.qulinks_record)
-        assert(qulink not in qulinks_record_after_delete.qulinks_record)
+        assert(qulink in qulinks_record)
+        assert(qulink not in qulinks_record_after_delete)
